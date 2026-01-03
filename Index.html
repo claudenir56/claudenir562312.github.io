@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Analisador de Tendência – Roleta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .botoes button {
+      font-size: 18px;
+      padding: 12px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .vermelho { background: red; color: white; }
+    .preto { background: black; color: white; border: 1px solid #fff; }
+    .zero { background: green; color: white; }
+
+    .painel {
+      margin-top: 20px;
+      padding: 15px;
+      background: #222;
+      border-radius: 8px;
+    }
+
+    .historico {
+      margin-top: 10px;
+      word-wrap: break-word;
+    }
+
+    .gatilho {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: yellow;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Analisador de Roleta (Cores)</h1>
+  <p>Insira os resultados conforme saem na roleta</p>
+
+  <div class="botoes">
+    <button class="vermelho" onclick="adicionar('V')">Vermelho</button>
+    <button class="preto" onclick="adicionar('P')">Preto</button>
+    <button class="zero" onclick="adicionar('0')">Zero</button>
+  </div>
+
+  <div class="painel">
+    <h3>Últimas jogadas</h3>
+    <div id="historico" class="historico">—</div>
+
+    <div id="gatilho" class="gatilho">Nenhum gatilho no momento</div>
+  </div>
+
+  <script>
+    let jogadas = [];
+
+    function adicionar(valor) {
+      jogadas.push(valor);
+
+      if (jogadas.length > 20) {
+        jogadas.shift(); // mantém só as últimas 20
+      }
+
+      atualizarTela();
+      analisarPadrao();
+    }
+
+    function atualizarTela() {
+      document.getElementById("historico").innerText = jogadas.join(" ");
+    }
+
+    function analisarPadrao() {
+      let gatilhoTexto = "Nenhum gatilho no momento";
+
+      if (jogadas.length >= 4) {
+        let ultimas = jogadas.slice(-4);
+
+        // 3 cores iguais seguidas
+        if (ultimas[0] === ultimas[1] &&
+            ultimas[1] === ultimas[2] &&
+            ultimas[0] !== ultimas[3]) {
+
+          if (ultimas[2] === "V") {
+            gatilhoTexto = "⚠️ Após 3 Vermelhos, atenção para PRETO";
+          } else if (ultimas[2] === "P") {
+            gatilhoTexto = "⚠️ Após 3 Pretos, atenção para VERMELHO";
+          }
+        }
+
+        // padrão com zero
+        if (ultimas.includes("0")) {
+          gatilhoTexto = "ℹ️ Zero detectado: observe possível continuidade ou quebra";
+        }
+      }
+
+      document.getElementById("gatilho").innerText = gatilhoTexto;
+    }
+  </script>
+
+</body>
+</html>
